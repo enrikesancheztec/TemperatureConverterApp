@@ -1,17 +1,20 @@
 import { StyleSheet, View } from 'react-native';
 
-import { Button, Stack as MaterialStack, Text, TextInput } from "@react-native-material/core";
+import { Button, Stack as MaterialStack, Text, TextInput, Snackbar } from "@react-native-material/core";
 
 import useTemperatureConverter from '../hooks/useTemperatureConverter';
 
 export default function ConvertTemperatureForm() {
-    const { celsius, setCelsius, fahrenheit, convertTemperature } = useTemperatureConverter();
+    const { celsius, setCelsius, fahrenheit, convertTemperature, error } = useTemperatureConverter();
 
     return (
         <MaterialStack>
             <View style={styles.headline}>
                 <Text variant="h6">Convertidor de Temperaturas</Text>
             </View>
+            {error !== '' && (
+                <Snackbar message={error} style={styles.errorMessage} />
+            )}
             <View style={styles.inputContainer}>
                 <Text variant="body1" style={styles.fieldLabel}>Grados Celsius:</Text>
                 <TextInput variant="standard" value={celsius} onChangeText={(text) => setCelsius(text)} />
@@ -61,5 +64,12 @@ const styles = StyleSheet.create({
     },
     formButton: {
         shadowOffset: 0,
+    },
+    errorMessage: {
+        position: "absolute", 
+        start: 16, 
+        end: 16, 
+        top: 5,
+        backgroundColor: '#ff8888'
     }
 });
