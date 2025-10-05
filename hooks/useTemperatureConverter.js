@@ -1,19 +1,26 @@
-import {useState}  from 'react';
-import TemperatureUtil from '../utils/TemperatureUtil';
+import { useState } from 'react';
+import TemperatureServiceProxy from '../proxies/TemperatureServiceProxy';
 import { TemperatureVO } from '../valueobjects/TemperatureVO';
 
 const useTemperatureConverter = () => {
     const [celsius, setCelsius] = useState('');
     const [fahrenheit, setFahrenheit] = useState('');
-    const { convert } = TemperatureUtil();
-    
+    const [error, setError] = useState('');
+    const { convert } = TemperatureServiceProxy();
+
     function convertTemperature() {
-        let originalCelsius = new TemperatureVO(celsius, 'CELSIUS')
-        let convertedFahrenheit = convert(originalCelsius, 'FAHRENHEIT');
-        setFahrenheit(convertedFahrenheit.value);
+        setError('');
+        let originalCelsius = new TemperatureVO(celsius, 'CELSIUS');
+        convert(originalCelsius, 'FAHRENHEIT')
+            .then(convertedFahrenheit => {
+                setFahrenheit(convertedFahrenheit.value);
+            }).catch(error => {
+                setError(error.message);
+                console.log(error.message);
+            });
     }
 
-    return { celsius, setCelsius, fahrenheit, setFahrenheit, convertTemperature }
+    return { celsius, setCelsius, fahrenheit, convertTemperature, error }
 }
 
 export default useTemperatureConverter;
